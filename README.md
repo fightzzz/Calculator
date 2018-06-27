@@ -1,3 +1,4 @@
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -18,8 +19,14 @@ import javax.swing.border.BevelBorder;
 
 public class Calculator {
     // 主框架
-    private JFrame jframe = new JFrame("Calculator by Group 22");
-    //显示窗口载体
+    private JFrame jframe = new JFrame("计算器by K.O");
+    // 菜单载体
+    private JMenuBar jmemubar = new JMenuBar();
+    // 菜单,酌情放入其他功能
+    private JMenu jmb_view = new JMenu("查看(V)");
+    private JMenu jmb_edit = new JMenu("编辑(E)");
+    private JMenu jmb_help = new JMenu("帮助(H)");
+    // 显示窗口载体
     private JPanel jpanel_show = new JPanel();
     // 输入显示标签
     private JLabel jla_input = new JLabel();
@@ -31,8 +38,8 @@ public class Calculator {
     private JPanel jp_button = new JPanel();
     private String result = " ";
     // 按键显示字符
-    private String[] str = { "1", "2", "3", "+", "x²","x³", "4", "5", "6", "-", "Abs","cos", "7", "8", "9", "*", "1/x","tan", "0", "(",
-            ")", "÷", "log","sin",".","←", "c", "=", "Int","√"};
+    private String[] str = { "1", "2", "3", "+", "4", "5", "6", "-" , "7", "8", "9", "*", "0", "(",
+            ")", "÷",  ".", "←", "c", "=",};
     // 按键
     private JButton[] jb_button = new JButton[str.length];
 
@@ -41,12 +48,22 @@ public class Calculator {
      */
     private void init() {
 
+        // 菜单添加到菜单载体中
+        jmb_view.setMnemonic('V');
+        jmemubar.add(jmb_view);
+        jmb_edit.setMnemonic('E');
+        jmemubar.add(jmb_edit);
+        jmb_help.setMnemonic('H');
+        jmemubar.add(jmb_help);
+        jmb_view.setFont(new Font("", Font.ROMAN_BASELINE, 10));
+        jmb_edit.setFont(new Font("", Font.ROMAN_BASELINE, 10));
+        jmb_help.setFont(new Font("", Font.ROMAN_BASELINE, 10));
         // 设置显示框计算结果大字体, 设置字体右对齐
         jla_show.setText("0");
         jla_show.setHorizontalAlignment(JLabel.RIGHT);
         jla_show.setFont(new Font("arial", Font.BOLD, 22));
         jla_show.setForeground(Color.BLUE);
-       
+        // jla_show.setBackground(Color.BLUE);
 
         // 设置显示框输入显示的字体,设置字体右对齐
         jla_input.setText(" ");
@@ -67,10 +84,10 @@ public class Calculator {
         jpanel_show.add(jla_error, BorderLayout.NORTH);
 
         jpanel_show.setBorder(
-                new BevelBorder(BevelBorder.RAISED, new Color(250, 250, 250), null, SystemColor.scrollbar, null));
+                new BevelBorder(BevelBorder.RAISED, new Color(180, 180, 180), null, SystemColor.scrollbar, null));
 
         // 按键设置为网格布局
-        jp_button.setLayout(new GridLayout(5, 6, 4, 4));
+        jp_button.setLayout(new GridLayout(5, 5, 4, 4));
         jp_button.setBorder(
                 new BevelBorder(BevelBorder.RAISED, new Color(180, 180, 180), null, SystemColor.scrollbar, null));
         // 按键
@@ -78,7 +95,7 @@ public class Calculator {
             jb_button[i] = new JButton(str[i]);
             jb_button[i].setContentAreaFilled(false);// 除去默认的背景填充
             jb_button[i].setFocusPainted(false);// 除去焦点的框
-            
+            // jb_button[i].setForeground(Color.blue);
             // 按键注册监听器
             jb_button[i].addActionListener(new ButtonListener());
             // 按键添加到按键载体中
@@ -88,7 +105,8 @@ public class Calculator {
         jframe.add(jp_button, BorderLayout.CENTER);
         // 显示框载体加载到主框架
         jframe.add(jpanel_show, BorderLayout.NORTH);
-       
+        // 菜单载体加载到主框架
+        jframe.setJMenuBar(jmemubar);
 
         // 窗口位置，左上角为屏幕中央
         jframe.setLocationRelativeTo(null);
@@ -106,7 +124,7 @@ public class Calculator {
     /**
      * 事件处理
      * 
-     *
+     * @author K.O
      *
      */
     private class ButtonListener implements ActionListener {
@@ -121,7 +139,7 @@ public class Calculator {
             if (flag1 && content.matches("^\\d")) {
                 result = content;
                 jla_input.setText(result);
-                
+                jla_show.setText("0");
             }
             if (content.equals("←"))
                 backSpace();// 后退
@@ -137,25 +155,7 @@ public class Calculator {
                     result = result.substring(0, result.length() - 1);
 
                 }
-                else if (str.indexOf("log") != -1) {
-                    int index = indexOfOpecifiedMirrorBracket(str, '(',
-                            str.indexOf("log") + 3);
-                    String s = str.substring(str.indexOf("log") + 4, index);
-                    if (parse(s) < 0.0) {
-                        jla_error.setText("negative number do not available!");
-                    } else
-                        calculate();
-                }
-                // 如果出现根号下负数，报错“负数没有平方根”
-                else if (str.indexOf("sqt") != -1) {
-                    int index = indexOfOpecifiedMirrorBracket(str, '(',
-                            str.indexOf("sqt") + 3);
-                    String s = str.substring(str.indexOf("sqt") + 4, index);
-                    if (parse(s) < 0.0) {
-                        jla_error.setText("negative number do not have a square root!");
-                    } else
-                        calculate();
-                }
+               
                 // 如果出现/0.0报错“0不能作为被除数”
                 else if (jla_input.getText().indexOf("/") != -1) {
                     String s = "";                  
@@ -233,7 +233,7 @@ public class Calculator {
      */
     private static String parseInputStr(String result, String content) {
 
-        // 刚开始输入只能输入数字-或者(
+        // 刚开始输入只能输入数字、-或者(
         if (result.equals(" ") || result.equals("")) {
             if (content.matches("\\d+|\\-|\\(*")) {
                 result = "".concat(content);
@@ -251,14 +251,11 @@ public class Calculator {
 
         // 以数字结尾
         else if (Pattern.matches(".*\\d$", result)) {
-            // 0后不可输入数字
+            // 不可输入00
             if (lastNumberOfStr(result).matches("^0+")
-                    &&  !content.matches("\\+|\\-|\\*|÷|\\.|=|log|sin|cos|tan|x²|x³|1/x|√"))
+                    && /* !content.equals(".") &&!content.equals("=") && */ !content.matches("\\+|\\-|\\*|÷|\\.|="))
                 result = result + "";
-            // 数字后面跟x²，1/x，√
-            else if (content.matches("x²|x³|1/x|√|log|sin|cos|Abs|Int")) {
-                result = parseDigitEndWithFuncthion(result, content);
-            }
+            
             // x.y后不能接小数点，如2.1后不能输入点，不能出现2.1.2
             else if (Pattern.matches(".*\\.\\d+$", result)) {// resul以.数字结尾
                 result = result.concat(content.matches("\\d*|\\+|\\-|\\*|÷|\\)|=") ? content : "");
@@ -285,25 +282,22 @@ public class Calculator {
             if (content.matches("\\)")) {
                 result = result + content;
             }
-            if (content.matches("x²|x³|1/x|√|log|sin|cos|Abs|Int")) {
-                result = parseBrackets(result, content);
-            }
         }
         // 以加减乘除结尾
         else if (result.matches(".*\\+$|.*\\-$|.*\\*$|.*÷$|.*/$")) {
             result = result.replaceAll("÷", "/");
             if (result.matches(".*\\-$")) {// 以减号结尾
                 if (result.length() == 1)
-                    result = result + (content.matches("\\(|\\d") ? content : "");// 负号
+                    result = result + (content.matches("\\(|\\d|π") ? content : "");// 负号
                 else if (result.length() > 1) {// 减号或左括号负号
                     boolean b = result.charAt(result.length() - 2) == '(';
                     if (b)
-                        result = result + (content.matches("\\(|\\d") ? content : "");// 左括号负号
+                        result = result + (content.matches("\\(|\\d|π") ? content : "");// 左括号负号
                     else
-                        result = result + (content.matches("\\(|\\d") ? " " + content : "");// 减号
+                        result = result + (content.matches("\\(|\\d|π") ? " " + content : "");// 减号
                 }
             } else
-                result = result + (content.matches("\\(|\\d") ? " " + content : "");
+                result = result + (content.matches("\\(|\\d|π") ? " " + content : "");
         }
         
       
@@ -318,79 +312,23 @@ public class Calculator {
      */
     private static double parse(String content) {
 
-       
-      
-        if (content.contains("1/x"))
-            content = content.replace("1/x", "rec");
-       
-        // 处理平方
-        int index = content.indexOf("sqr");
-        if (index != -1) {
-            int endindex = indexOfOpecifiedMirrorBracket(content, '(', index + 3);
-            String d = "(" + content.substring(index + 3, endindex + 1) + "*"
-                    + content.substring(index + 3, endindex + 1) + ")";
-            return parse(content.substring(0, index) + d + content.substring(endindex + 1));
+  
+        // 处理乘以负数*-
+        if (content.contains("*-") || content.matches(".*(\\*\\s\\-).*")) {
+            content = content.replaceAll("\\*\\s\\-", "*-");
+            content = multiplicationAndDivisionOfNegative(content, "*");
         }
-        // 处理立方
-        index = content.indexOf("cube");
-       if (index != -1) {
-           int endindex = indexOfOpecifiedMirrorBracket(content, '(', index + 4);
-          
-           String d = "(" + content.substring(index + 4, endindex + 1) + "*"
-                   + content.substring(index + 4, endindex + 1) + "*"+content.substring(index + 4, endindex + 1)+")";
-           return parse(content.substring(0, index) + d + content.substring(endindex + 1));
-       }
-
-        // 处理开方
-        index = content.indexOf("sqt");
-        if (index != -1) {
-            int endindex = indexOfOpecifiedMirrorBracket(content, '(', index + 3);
-            double d = Math.sqrt(parse(content.substring(index + 3, endindex + 1)));
-            return parse(content.substring(0, index) + d + content.substring(endindex + 1));
+        // 处理除以负数/-
+        if (content.contains("/-") || content.matches(".*(/\\s\\-).*")) {
+            content = content.replaceAll("/\\s\\-", "/-");
+            content = multiplicationAndDivisionOfNegative(content, "/");
         }
-        index = content.indexOf("Abs");
-        if (index != -1) {
-            int endindex = indexOfOpecifiedMirrorBracket(content, '(', index + 3);
-            double d = Math.abs(parse(content.substring(index + 3, endindex + 1)));
-            return parse(content.substring(0, index) + d + content.substring(endindex + 1));
-        }
-        //处理取整
-        index = content.indexOf("Int");
-        if (index != -1) {
-            int endindex = indexOfOpecifiedMirrorBracket(content, '(', index + 3);
-            double d = Math.floor(parse(content.substring(index + 3, endindex + 1)));
-            return parse(content.substring(0, index) + d + content.substring(endindex + 1));
-        }
-        // 处理sin
-        index = content.indexOf("sin");
-        if (index != -1) {
-            int endindex = indexOfOpecifiedMirrorBracket(content, '(', index + 3);
-            double d = Math.sin(parse(content.substring(index + 3, endindex + 1)));
-            return parse(content.substring(0, index) + d + content.substring(endindex + 1));
+        // --转成+
+        if (content.contains("--") || content.matches(".*(\\-\\s\\-).*")) {
+            content = content.replaceAll("\\-\\s\\-", "+");
+            content = content.replaceAll("\\-\\-", "+");
         }
 
-        // 处理cos
-        index = content.indexOf("cos");
-        if (index != -1) {
-            int endindex = indexOfOpecifiedMirrorBracket(content, '(', index + 3);
-            double d = Math.cos(parse(content.substring(index + 3, endindex + 1)));
-            return parse(content.substring(0, index) + d + content.substring(endindex + 1));
-        }
-
-        // 处理求倒
-        index = content.indexOf("rec");
-        if (index != -1) {
-            int endindex = indexOfOpecifiedMirrorBracket(content, '(', index + 3);
-            double d = parse("1/" + content.substring(index + 3, endindex + 1));
-            return parse(content.substring(0, index) + d + content.substring(endindex + 1));
-        }
-
-        index = content.indexOf("log");
-        if (index != -1) {
-            int endindex = indexOfOpecifiedMirrorBracket(content, '(', index + 3);
-            double d = Math.log10(parse(content.substring(index + 3, endindex + 1)));
-            return parse(content.substring(0, index) + d + content.substring(endindex + 1));
-        }
         // 处理括号
         int startindex = content.indexOf("(");
         boolean b = countsOfSubstringInString(content, "(") == countsOfSubstringInString(content, ")");
@@ -400,11 +338,8 @@ public class Calculator {
             return parse(content.substring(0, startindex) + d + content.substring(endindex + 1));
         }
 
-        
-
-
         // 处理加法
-        index = content.indexOf("+");
+        int index = content.indexOf("+");
         if (index != -1) {
             return parse(content.substring(0, index)) + parse(content.substring(index + 1));
         }
@@ -567,7 +502,25 @@ public class Calculator {
         return temp;
     }
 
- 
+    /**
+     * 处理算式中的*-和/-
+     * 
+     */
+    private static String multiplicationAndDivisionOfNegative(String content, String operator) {
+        int indexofoperator = content.indexOf(operator);
+        int startindex = indexOfLeftOperator(content, indexofoperator);// indexofoperator左边最近的运算符+-*/的位置
+        if (startindex == -1) {
+            content = "-" + content.substring(0, content.indexOf(operator) + 1)
+                    + content.substring(content.indexOf(operator) + 2);
+        }
+        if (startindex != -1) {
+            if (content.substring(indexofoperator, indexofoperator + 2).equals(operator + "-")) {
+                String tempstr = "-" + content.substring(startindex + 1, indexofoperator + 1);
+                content = content.substring(0, startindex + 1) + tempstr + content.substring(indexofoperator + 2);
+            }
+        }
+        return content;
+    }
 
     /**
      * 找数字结尾的字符串结束位置开始往前的一个完整数字的位置
@@ -646,144 +599,6 @@ public class Calculator {
             return "";
     }
 
-    /**
-     * 右括号后面跟平方、求倒、开方
-     * 
-     * @param result
-     * @param content
-     * @return
-     */
-    private static String parseBrackets(String result, String content) {
-        String temp = "";
-        int startIndex = indexOfFirstMirrorBracket(result, ')');
-        int indexOfOperator = indexOfLeftOperator(result, startIndex);
-        String substrhead = "";
-        String substrtrail = "";
-        if (indexOfOperator == -1)
-            substrtrail = result;
-        else {
-            substrhead = result.substring(0, indexOfOperator + 2);
-            substrtrail = result.substring(indexOfOperator + 2);
-        }
-        if (content.equals("√")) {
-            if (substrtrail.startsWith("(") && substrtrail.endsWith(")")
-                    && indexOfFirstMirrorBracket(substrtrail, '(') == substrtrail.length() - 1)
-                temp = substrhead + "sqt" + substrtrail;
-            else
-                temp = substrhead + "sqt(" + substrtrail + ")";
-        }
-        if (content.equals("x²")) {
-            if (substrtrail.startsWith("(") && substrtrail.endsWith(")")
-                    && indexOfFirstMirrorBracket(substrtrail, '(') == substrtrail.length() - 1)
-                temp = substrhead + "sqr" + substrtrail;
-            else
-                temp = substrhead + "sqr(" + substrtrail + ")";
-        }
-        if (content.equals("x³")) {
-            if (substrtrail.startsWith("(") && substrtrail.endsWith(")")
-                    && indexOfFirstMirrorBracket(substrtrail, '(') == substrtrail.length() - 1)
-                temp = substrhead + "cube" + substrtrail;
-            else
-                temp = substrhead + "cube(" + substrtrail + ")";
-        }
-        if (content.equals("1/x")) {
-            if (substrtrail.startsWith("(") && substrtrail.endsWith(")")
-                    && indexOfFirstMirrorBracket(substrtrail, '(') == substrtrail.length() - 1)
-                temp = substrhead + "rec" + substrtrail;
-            else
-                temp = substrhead + "rec(" + substrtrail + ")";
-        }
-        if (content.equals("Abs")) {
-            if (substrtrail.startsWith("(") && substrtrail.endsWith(")")
-                    && indexOfFirstMirrorBracket(substrtrail, '(') == substrtrail.length() - 1)
-                temp = substrhead + "Abs" + substrtrail;
-            else
-                temp = substrhead + "Abs(" + substrtrail + ")";
-        }
-        if (content.equals("Int")) {
-            if (substrtrail.startsWith("(") && substrtrail.endsWith(")")
-                    && indexOfFirstMirrorBracket(substrtrail, '(') == substrtrail.length() - 1)
-                temp = substrhead + "Int" + substrtrail;
-            else
-                temp = substrhead + "Int(" + substrtrail + ")";
-        }
-        if (content.equals("sin")) {
-            if (substrtrail.startsWith("(") && substrtrail.endsWith(")")
-                    && indexOfFirstMirrorBracket(substrtrail, '(') == substrtrail.length() - 1)
-                temp = substrhead + "sin" + substrtrail;
-            else
-                temp = substrhead + "sin(" + substrtrail + ")";
-        }
-        if (content.equals("cos")) {
-            if (substrtrail.startsWith("(") && substrtrail.endsWith(")")
-                    && indexOfFirstMirrorBracket(substrtrail, '(') == substrtrail.length() - 1)
-                temp = substrhead + "cos" + substrtrail;
-            else
-                temp = substrhead + "cos(" + substrtrail + ")";
-        }
-        if (content.equals("log")) {
-            if (substrtrail.startsWith("(") && substrtrail.endsWith(")")
-                    && indexOfFirstMirrorBracket(substrtrail, '(') == substrtrail.length() - 1)
-                temp = substrhead + "log" + substrtrail;
-            else
-                temp = substrhead + "log(" + substrtrail + ")";
-        }
-        if (temp.startsWith("(") && temp.endsWith(")") && indexOfFirstMirrorBracket(temp, '(') == temp.length() - 1)
-            temp = temp.substring(1, temp.length() - 1);
-
-        return temp;
-    }
-
-    /**
-     * 数字结尾后面跟平方、求倒、开方
-     * 
-     * @param result
-     * @param content
-     * @return
-     */
-    private static String parseDigitEndWithFuncthion(String result, String content) {
-        String temp = "";
-        String contentTemp = "";
-        if (content.equals("1/x"))
-            contentTemp = "rec";
-        if (content.equals("x³"))
-            contentTemp = "cube";
-        
-        if (content.equals("x²"))
-            contentTemp = "sqr";
-        if (content.equals("x³"))
-            contentTemp = "cube";
-        if (content.equals("√"))
-            contentTemp = "sqt";
-        if (content.equals("log"))
-            contentTemp = "log";
-        if (content.equals("Abs"))
-            contentTemp = "Abs";
-        if (content.equals("Int"))
-            contentTemp = "Int";
-        if (content.equals("sin"))
-            contentTemp = "sin";        
-        if (content.equals("cos"))
-            contentTemp = "cos"; 
-        
-        int startIndex = indexOfNumberStart(result);// 数字的开头
-        String substrhead = result.substring(0, startIndex);
-        String substrtrail = result.substring(startIndex);
-        if (result.startsWith("-") && startIndex == 1) {
-            if (contentTemp == "!")
-                temp = "-" + result.substring(startIndex) + "!";
-            else
-                temp = contentTemp + "(" + result + ")";
-        } else {
-            if (contentTemp == "!") {
-                if (substrtrail.matches(".*\\.\\d*[1-9]+$"))
-                    temp = result;
-                else
-                    temp = substrhead + substrtrail + contentTemp;
-            } else
-                temp = substrhead + contentTemp + "(" + substrtrail + ")";
-        }
-        return temp;
-    }
+   
 
 }
