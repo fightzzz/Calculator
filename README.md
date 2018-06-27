@@ -1,5 +1,3 @@
-@@ -0,0 +1,790 @@
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
